@@ -30,10 +30,39 @@
 |0520~0527(第1周) | 1% | 操作得当 | 顺势而为 |
 | ... | ... | ... | ... |
 
+<script type="text/javascript">
+$(document).ready(function() {
+    //为超链接加上target='_blank'属性
+	$('a[href^="http"]').each(function() {
+		$(this).attr('target', '_blank');
+	});
+});
+</script>
+
 ###[复利计算器](http://htmlpreview.github.io/?https://github.com/qq644531343/gp/blob/master/calc.html)
+
 
 ##学习碎片
 
 
 ##经验碎片
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+	    //为超链接加上target='_blank'属性
+		$('a[href^="http"]').each(function() {
+			$(this).attr('target', '_blank');
+		});
+	});
+</script>
 
