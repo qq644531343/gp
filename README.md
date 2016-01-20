@@ -30,6 +30,7 @@
 |0520~0527(第1周) | 1% | 操作得当 | 顺势而为 |
 | ... | ... | ... | ... |
 
+###[复利计算器](http://htmlpreview.github.io/?https://github.com/qq644531343/gp/blob/master/calc.html)
 
 ##学习碎片
 
