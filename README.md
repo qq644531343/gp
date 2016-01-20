@@ -39,8 +39,7 @@ $(document).ready(function() {
 });
 </script>
 
-###[复利计算器](http://htmlpreview.github.io/?https://github.com/qq644531343/gp/blob/master/calc.html)
-
+###<a href="http://htmlpreview.github.io/?https://github.com/qq644531343/gp/blob/master/calc.html" target="_blank">复利计算器</a>
 
 ##学习碎片
 
