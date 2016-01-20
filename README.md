@@ -30,38 +30,20 @@
 |0520~0527(第1周) | 1% | 操作得当 | 顺势而为 |
 | ... | ... | ... | ... |
 
-<script type="text/javascript">
-$(document).ready(function() {
-    //为超链接加上target='_blank'属性
-	$('a[href^="http"]').each(function() {
-		$(this).attr('target', '_blank');
-	});
-});
-</script>
 
 ###<a href="http://htmlpreview.github.io/?https://github.com/qq644531343/gp/blob/master/calc.html" target="view_window"">复利计算器</a>
 
 ##学习碎片
-
+```
+1，兴趣、信念、机敏、总结、专注、学习、纪律、顺市
+   盘商、盘感
+```
 
 ##经验碎片
+```
+
+```
 
 
 
-
-
-
-
-
-
-
-
-<script type="text/javascript">
-	$(document).ready(function() {
-	    //为超链接加上target='_blank'属性
-		$('a[href^="http"]').each(function() {
-			$(this).attr('target', '_blank');
-		});
-	});
-</script>
 
