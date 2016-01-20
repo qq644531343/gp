@@ -1,4 +1,0 @@
-BAIDU_EXP_UNION_define({"tuid" : "u1967621_0","queryid" : "5ea41d4defa8e630","placement" : {"basic" : {"cname":"xiaoxiaobai_cpr","flowType":1,"rspFormat":1,"sellType":2,"sspId":1,"tuId":9223372032561776133,"userId":2952402}
-,"container" : {"anchoredType":1,"floated":{},"height":60,"sizeType":1,"slide":{},"width":728}
-,"fillstyle" : {"backgroundColor":"#FFFFFF","cloudTheme":{"skin":4,"stid":5},"elements":[5],"layout":[3],"lu":{"borderWidth":0,"number":0},"opacity":100,"search":{},"txt":{"align":1,"cbackground":"#FFFFFF","cborder":"#999999","cflush":"#e10900","ctitle":"#000000","fontName":"宋体","fontSize":12},"video":{}}
-,"userdefine" : "cpro_template=baiduCustSTagLinkUnit|cpro_version=2.0","complement_type" : 2},"extends" : "","pdb_deliv" : {"deliv_id" : "0","deliv_des" : {},"brandad" : 0},"order_deliv" : {"deliv_id" : "0","demand_id" : "0"},"rtb_deliv" : {"deliv_id" : "0","demand_id" : "1967621"}});
