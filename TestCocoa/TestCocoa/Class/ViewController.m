@@ -26,17 +26,22 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    NSString *lastCode = [[NSUserDefaults standardUserDefaults] valueForKey:@"lastCode"];
+    if (lastCode.length == 0) {
+        lastCode = @"000001";
+    }
 
     interval = 2;
     self.fieldTime.floatValue = interval;
-    self.fieldCode.stringValue = @"000001";
+    self.fieldCode.stringValue = lastCode;
     self.fieldCode.delegate = self;
     df = [[NSDateFormatter alloc] init];
     [df setDateFormat:@"HH:mm:ss"];
     
-    request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://hq.sinajs.cn/list=sh000001"]];
+    request = [[NSMutableURLRequest alloc] init];
     
-    [self update:nil];
+    [self beginRequestLoop];
 }
 
 -(void)update:(NSTimer *)timer
@@ -61,16 +66,16 @@
     @autoreleasepool {
          NSStringEncoding enc = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
         NSString *text = [[NSString alloc] initWithData:data encoding:enc];
-        
         NSRange rangeContent = [text rangeOfString:@"\""];
         if (rangeContent.location != NSNotFound && text.length>=rangeContent.location+1) {
+            NSString *queryCode = [text substringWithRange:NSMakeRange(11, rangeContent.location-1 - 11)];
             NSRange rangeContentEnd = [text rangeOfString:@"\"" options:NSCaseInsensitiveSearch range:NSMakeRange(rangeContent.location+1, text.length-(rangeContent.location+1+1))];
             if (rangeContentEnd.location != NSNotFound) {
                 NSString *content = [text substringWithRange:NSMakeRange(rangeContent.location+1, rangeContentEnd.location - rangeContent.location - 1)];
                 
                 NSArray *conArray = [content componentsSeparatedByString:@","];
                 if (conArray.count > 9) {
-                    [self exactData:conArray];
+                    [self exactData:conArray code:queryCode];
                     return;
                 }
             }
@@ -80,7 +85,15 @@
     
 }
 
--(void)exactData:(NSArray *)conArray {
+-(void)exactData:(NSArray *)conArray code:(NSString *)queryCode{
+    
+    if (self.fieldCode.stringValue.length == 0) {
+        return;
+    }
+    if (![queryCode isEqualToString:[self getCode]]) {
+        return;
+    }
+    
     
     char c = [self.fieldCode.stringValue characterAtIndex:0];
     
@@ -140,8 +153,8 @@
 
 }
 
--(void)mouseDown:(NSEvent *)theEvent
-{
+- (void)beginRequestLoop {
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(update:) object:nil];
     if(self.fieldTime.floatValue > 0 && self.fieldTime.floatValue < 20){
         interval = self.fieldTime.floatValue;
@@ -152,9 +165,13 @@
     if (self.fieldCode.stringValue.length > 0) {
         request.URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://hq.sinajs.cn/list=%@",[self getCode]]];
     }
-   
-    [self performSelector:@selector(update:) withObject:nil afterDelay:interval];
     
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:self.fieldCode.stringValue forKey:@"lastCode"];
+    [defaults synchronize];
+    
+    [self performSelector:@selector(update:) withObject:nil afterDelay:interval];
+
 }
 
 -(void)sendNotification:(NSString *)percent point:(NSString *)point
@@ -254,7 +271,7 @@
 -(void)controlTextDidChange:(NSNotification *)obj
 {
     if (self.fieldCode.stringValue.length >= 5) {
-        [self mouseDown:nil];
+        [self beginRequestLoop];
     }
 }
 
@@ -263,5 +280,13 @@
 
   
 }
+
+#pragma mark - 
+
+-(void)mouseDown:(NSEvent *)theEvent
+{
+    [self beginRequestLoop];
+}
+
 
 @end
