@@ -180,7 +180,7 @@
     NSTimeInterval t = [[NSDate date] timeIntervalSinceDate:self.lastPushDate];
     
     //幅度提醒限制
-    if (p > -2.0 && p < 1.0) {
+    if (p > -2.0 && p < 1.0 && ![self isFutureCode]) {
         return;
     }
     
@@ -194,10 +194,15 @@
     }
     
     //幅度变化百分比限制
-    if (self.lastPercent != 0 && fabs(p - self.lastPercent) < 0.1) {
-        return;
+    if ([self isFutureCode]) {
+        if (self.lastPercent != 0 && fabs(p - self.lastPercent) < 0.2) {
+            return;
+        }
+    }else {
+        if (self.lastPercent != 0 && fabs(p - self.lastPercent) < 0.1) {
+            return;
+        }
     }
-    
     
     NSUserNotification *notification = [[NSUserNotification alloc] init];
     [notification setDeliveryDate:[NSDate date]];
@@ -263,6 +268,22 @@
         }
     }else {
         return [code uppercaseString];
+    }
+}
+
+- (BOOL)isFutureCode {
+    
+    NSString *code = self.fieldCode.stringValue;
+    if (code.length == 0) {
+        return NO;
+    }
+    
+    char c = [code characterAtIndex:0];
+    
+    if (c >= '0' && c <= '9') {
+        return NO;
+    }else {
+        return YES;
     }
 }
 
