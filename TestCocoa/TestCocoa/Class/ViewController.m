@@ -107,6 +107,8 @@
     NSString *chengjiaoe = conArray[9];
     NSString *buy1count = conArray[10];
     NSString *sell1count = conArray[20];
+    NSString *buy1price = conArray[6];
+    NSString *sell1price = conArray[7];
     
     chengjiao = [NSString stringWithFormat:@"%.2f",[chengjiao intValue]/100.0/10000];
     chengjiaoe = [NSString stringWithFormat:@"%.2f亿",[chengjiaoe intValue]/10000/10000.0];
@@ -131,7 +133,7 @@
     NSString *time = [df stringFromDate:date];
     
     float percent = [dangqian floatValue] / [zuoshou floatValue] - 1;
-    printLog(@"%@ 开:%@ 现:%@ 幅:%.3f 昨:%@ 高:%@ 低:%@ 成:%@ 买:%@ 卖:%@ \ntime:%@",name,kaipan,dangqian,percent*100,zuoshou,max,min,chengjiaoe, buy1count, sell1count ,time);
+    printLog(@"%@ 开:%@ 现:%@ 幅:%.3f 昨:%@ 高:%@ 低:%@ 成:%@ 买量:%@ 买价:%@ 卖量:%@ 卖价:%@ \ntime:%@",name,kaipan,dangqian,percent*100,zuoshou,max,min,chengjiaoe, buy1count,buy1price, sell1count, sell1price ,time);
     
     self.labelScore.stringValue = [NSString stringWithFormat:@"当前: %@",dangqian];
     self.labelPercent.stringValue = [NSString stringWithFormat:@"幅度: %.3f",percent*100];
