@@ -10,12 +10,32 @@
 
 #define printLog(format, ...) ([self printLog:format, ##__VA_ARGS__])
 
+typedef enum {
+    TYPE_Gupiao,
+    TYPE_Futrue,
+    TYPE_Foreign
+}CODE_TYPE;
+
 @interface ViewController ()<NSTextFieldDelegate>
 {
     NSMutableURLRequest *request;
     NSTimeInterval interval;
     
     NSDateFormatter *df;
+    
+    //最新数据
+    NSString *name;
+    NSString *kaipan ;
+    NSString *zuoshou ;
+    NSString *dangqian ;
+    NSString *max ;
+    NSString *min ;
+    NSString *chengjiao ;
+    NSString *chengjiaoe ;
+    NSString *buy1count ;
+    NSString *sell1count ;
+    NSString *buy1price ;
+    NSString *sell1price;
 }
 
 @end;
@@ -44,7 +64,7 @@
     [self beginRequestLoop];
 }
 
--(void)update:(NSTimer *)timer
+-(void)update
 {
 //    NSLog(@"update");
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
@@ -56,7 +76,7 @@
         }
         
         
-        [self performSelector:@selector(update:) withObject:nil afterDelay:interval];
+        [self performSelector:@selector(update) withObject:nil afterDelay:interval];
     }];
     
 }
@@ -94,38 +114,16 @@
         return;
     }
     
+    [self cleanOldData];
     
-    char c = [self.fieldCode.stringValue characterAtIndex:0];
-    
-    NSString *name = conArray[0];
-    NSString *kaipan = conArray[1];
-    NSString *zuoshou = conArray[2];
-    NSString *dangqian = conArray[3];
-    NSString *max = conArray[4];
-    NSString *min = conArray[5];
-    NSString *chengjiao = conArray[8];
-    NSString *chengjiaoe = conArray[9];
-    NSString *buy1count = conArray[10];
-    NSString *sell1count = conArray[20];
-    NSString *buy1price = conArray[6];
-    NSString *sell1price = conArray[7];
-    
-    chengjiao = [NSString stringWithFormat:@"%.2f",[chengjiao intValue]/100.0/10000];
-    chengjiaoe = [NSString stringWithFormat:@"%.2f亿",[chengjiaoe intValue]/10000/10000.0];
-    buy1count = [NSString stringWithFormat:@"%d手",[buy1count intValue]/100];
-    sell1count = [NSString stringWithFormat:@"%d手",[sell1count intValue]/100];
-    
-    if (!(c >= '0' && c <= '9')) {
-        kaipan = conArray[2];
-        zuoshou = conArray[5];
-        dangqian = conArray[8];
-        max = conArray[3];
-        min = conArray[4];
-        chengjiao = conArray[14];
-        chengjiao = [NSString stringWithFormat:@"%.2f",[chengjiao intValue]/10000.0];
-        chengjiaoe = @"0";
-        buy1count = conArray[11];
-        sell1count = conArray[12];
+    if([self getCodeType] == TYPE_Gupiao) {
+        [self parseForGuPiao:conArray];
+    }else if([self getCodeType] == TYPE_Futrue) {
+        [self parseForFuture:conArray];
+    }else if([self getCodeType] == TYPE_Foreign) {
+        [self parseForForeignFuture:conArray];
+    }else {
+        return;
     }
     
     
@@ -137,7 +135,9 @@
     
     self.labelScore.stringValue = [NSString stringWithFormat:@"当前: %@",dangqian];
     self.labelPercent.stringValue = [NSString stringWithFormat:@"幅度: %.3f",percent*100];
-    self.labelSubmit.stringValue = [NSString stringWithFormat:@"量: %@ w",chengjiao];
+    if(chengjiao.length > 0) {
+        self.labelSubmit.stringValue = [NSString stringWithFormat:@"量: %@ w",chengjiao];
+    }
     self.labelBegin.stringValue = [NSString stringWithFormat:@"开: %@",kaipan];
     self.labelCrease.stringValue = [NSString stringWithFormat:@"点: %.2f",[dangqian floatValue] - [zuoshou floatValue]];
     
@@ -155,9 +155,77 @@
 
 }
 
+- (void)cleanOldData {
+    name = @"";
+    kaipan = @"";
+    zuoshou = @"";
+    dangqian = @"";
+    max = @"";
+    min = @"";
+    chengjiao = @"";
+    chengjiaoe = @"";
+    buy1count = @"";
+    buy1price = @"";
+    sell1count = @"";
+    sell1price = @"";
+}
+
+- (void)parseForGuPiao:(NSArray *)conArray {
+  
+    name = conArray[0];
+    kaipan = conArray[1];
+    zuoshou = conArray[2];
+    dangqian = conArray[3];
+    max = conArray[4];
+    min = conArray[5];
+    chengjiao = conArray[8];
+    chengjiaoe = conArray[9];
+    buy1count = conArray[10];
+    sell1count = conArray[20];
+    buy1price = conArray[6];
+    sell1price = conArray[7];
+    
+    chengjiao = [NSString stringWithFormat:@"%.2f",[chengjiao intValue]/100.0/10000];
+    chengjiaoe = [NSString stringWithFormat:@"%.2f亿",[chengjiaoe intValue]/10000/10000.0];
+    buy1count = [NSString stringWithFormat:@"%d手",[buy1count intValue]/100];
+    sell1count = [NSString stringWithFormat:@"%d手",[sell1count intValue]/100];
+
+}
+
+- (void)parseForFuture:(NSArray *)conArray {
+    
+    name = conArray[0];
+    kaipan = conArray[2];
+    zuoshou = conArray[5];
+    dangqian = conArray[8];
+    max = conArray[3];
+    min = conArray[4];
+    chengjiao = conArray[14];
+    chengjiaoe = conArray[9];
+    buy1count = conArray[11];
+    sell1count = conArray[12];
+    buy1price = conArray[6];
+    sell1price = conArray[7];
+
+    chengjiao = [NSString stringWithFormat:@"%.2f",[chengjiao intValue]/10000.0];
+    chengjiaoe = @"0";
+}
+
+- (void)parseForForeignFuture:(NSArray *)conArray {
+    
+    kaipan = conArray[8];
+    dangqian = conArray[0];
+    buy1price = conArray[2];
+    sell1price = conArray[3];
+    max = conArray[4];
+    min = conArray[5];
+    zuoshou = conArray[7];
+    name = conArray[13];
+}
+
 - (void)beginRequestLoop {
     
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(update:) object:nil];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(update) object:nil];
     if(self.fieldTime.floatValue > 0 && self.fieldTime.floatValue < 20){
         interval = self.fieldTime.floatValue;
     }else{
@@ -172,7 +240,7 @@
     [defaults setObject:self.fieldCode.stringValue forKey:@"lastCode"];
     [defaults synchronize];
     
-    [self performSelector:@selector(update:) withObject:nil afterDelay:interval];
+    [self performSelector:@selector(update) withObject:nil afterDelay:interval];
 
 }
 
@@ -182,7 +250,7 @@
     NSTimeInterval t = [[NSDate date] timeIntervalSinceDate:self.lastPushDate];
     
     //幅度提醒限制
-    if (p > -2.0 && p < 1.0 && ![self isFutureCode]) {
+    if (p > -2.0 && p < 1.0 && [self getCodeType]==TYPE_Gupiao) {
         return;
     }
     
@@ -196,7 +264,7 @@
     }
     
     //幅度变化百分比限制
-    if ([self isFutureCode]) {
+    if ([self getCodeType] > TYPE_Gupiao) {
         if (self.lastPercent != 0 && fabs(p - self.lastPercent) < 0.2) {
             return;
         }
@@ -269,23 +337,30 @@
             return [NSString stringWithFormat:@"sh%@",code];
         }
     }else {
-        return [code uppercaseString];
+        if ([code hasPrefix:@"hf_"]) {
+            return [NSString stringWithFormat:@"hf_%@", [[code substringFromIndex:3] uppercaseString]];
+        }else
+            return [code uppercaseString];
     }
 }
 
-- (BOOL)isFutureCode {
+- (CODE_TYPE)getCodeType {
     
     NSString *code = self.fieldCode.stringValue;
     if (code.length == 0) {
-        return NO;
+        return TYPE_Gupiao;
     }
     
     char c = [code characterAtIndex:0];
     
     if (c >= '0' && c <= '9') {
-        return NO;
+         return TYPE_Gupiao;
     }else {
-        return YES;
+        if([code hasPrefix:@"hf_"]) {
+            return TYPE_Foreign;
+        }else {
+            return TYPE_Futrue;
+        }
     }
 }
 
