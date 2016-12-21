@@ -307,7 +307,18 @@ typedef enum {
             self.logLabel.hidden = NO;
             
             NSMutableAttributedString *attr = [[NSMutableAttributedString alloc] initWithString:outStr];
+            
+            //时间
             [attr addAttribute:NSForegroundColorAttributeName value:[NSColor blueColor] range:NSMakeRange(outStr.length-13, 13)];
+            
+            //买量 & 卖量
+            NSRange buyrange = [outStr rangeOfString:@"买量:"];
+            NSRange buyspace = [outStr rangeOfString:@" " options:NSCaseInsensitiveSearch range:NSMakeRange(buyrange.location, outStr.length - buyrange.location)];
+            NSRange sellrange = [outStr rangeOfString:@"卖量:"];
+            NSRange sellspace = [outStr rangeOfString:@" " options:NSCaseInsensitiveSearch range:NSMakeRange(sellrange.location, outStr.length - sellrange.location)];
+
+            [attr addAttribute:NSForegroundColorAttributeName value:[NSColor blueColor] range:NSMakeRange(buyrange.location+buyrange.length, buyspace.location - (buyrange.location+buyrange.length))];
+            [attr addAttribute:NSForegroundColorAttributeName value:[NSColor blueColor] range:NSMakeRange(sellrange.location+sellrange.length, sellspace.location - (sellrange.location+sellrange.length))];
             
             self.logLabel.attributedStringValue = attr;
         }else{
