@@ -13,6 +13,7 @@
 typedef enum {
     TYPE_Gupiao,
     TYPE_Futrue,
+    TYPE_MEIGU,
     TYPE_Foreign
 }CODE_TYPE;
 
@@ -122,6 +123,8 @@ typedef enum {
         [self parseForFuture:conArray];
     }else if([self getCodeType] == TYPE_Foreign) {
         [self parseForForeignFuture:conArray];
+    }else if([self getCodeType] == TYPE_MEIGU) {
+        [self parseForMeiGu:conArray];
     }else {
         return;
     }
@@ -221,6 +224,21 @@ typedef enum {
     min = conArray[5];
     zuoshou = conArray[7];
     name = conArray[13];
+}
+
+- (void)parseForMeiGu:(NSArray *)conArray {
+    
+    name = conArray[0];
+    kaipan = conArray[8];
+    zuoshou = conArray[26];
+    dangqian = conArray[1];
+    max = conArray[6];
+    min = conArray[7];
+    chengjiao = conArray[10];
+    
+    
+    chengjiao = [NSString stringWithFormat:@"%.2f",[chengjiao intValue]/100.0/10000];
+
 }
 
 - (void)beginRequestLoop {
@@ -354,6 +372,8 @@ typedef enum {
     }else {
         if ([code hasPrefix:@"hf_"]) {
             return [NSString stringWithFormat:@"hf_%@", [[code substringFromIndex:3] uppercaseString]];
+        }else if([[code lowercaseString] hasPrefix:@"gb_"]) {
+            return [code lowercaseString];
         }else
             return [code uppercaseString];
     }
@@ -373,6 +393,8 @@ typedef enum {
     }else {
         if([code hasPrefix:@"hf_"]) {
             return TYPE_Foreign;
+        }else if([code hasPrefix:@"gb_"]) {
+            return TYPE_MEIGU;
         }else {
             return TYPE_Futrue;
         }
