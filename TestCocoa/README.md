@@ -26,3 +26,8 @@ A股：直接输入股票代码即可， 支持上证、深证、创业板：
 国外期货: hf+期货代码
 美原油：hf_cl
 具体代码请查看：http://finance.sina.com.cn/money/future/hf.html
+
+港股：hk+公司编码
+小米: hk01810 恒生指数：hkHSI
+具体代码查看：http://vip.stock.finance.sina.com.cn/mkt/#qbgg_hk
+

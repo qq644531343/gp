@@ -11,10 +11,11 @@
 #define printLog(format, ...) ([self printLog:format, ##__VA_ARGS__])
 
 typedef enum {
-    TYPE_Gupiao,
-    TYPE_Futrue,
-    TYPE_MEIGU,
-    TYPE_Foreign
+    TYPE_Gupiao, //A股
+    TYPE_Futrue, //国内期货
+    TYPE_MEIGU,  //美股
+    TYPE_Foreign,  //国外期货
+    TYPE_GANGGU   //港股
 }CODE_TYPE;
 
 @interface ViewController ()<NSTextFieldDelegate>
@@ -117,14 +118,17 @@ typedef enum {
     
     [self cleanOldData];
     
-    if([self getCodeType] == TYPE_Gupiao) {
+    CODE_TYPE type = [self getCodeType];
+    if(type == TYPE_Gupiao) {
         [self parseForGuPiao:conArray];
-    }else if([self getCodeType] == TYPE_Futrue) {
+    }else if(type == TYPE_Futrue) {
         [self parseForFuture:conArray];
-    }else if([self getCodeType] == TYPE_Foreign) {
+    }else if(type == TYPE_Foreign) {
         [self parseForForeignFuture:conArray];
-    }else if([self getCodeType] == TYPE_MEIGU) {
+    }else if(type == TYPE_MEIGU) {
         [self parseForMeiGu:conArray];
+    }else if(type == TYPE_GANGGU) {
+        [self parseForGangGu:conArray];
     }else {
         return;
     }
@@ -239,6 +243,22 @@ typedef enum {
     
     chengjiao = [NSString stringWithFormat:@"%.2f",[chengjiao intValue]/100.0/10000];
 
+}
+
+- (void)parseForGangGu:(NSArray *)conArray {
+    
+    name = conArray[1];
+    kaipan = conArray[2];
+    zuoshou = conArray[3];
+    dangqian = conArray[6];
+    max = conArray[4];
+    min = conArray[5];
+    chengjiao = conArray[12];
+    chengjiaoe = conArray[11];
+    
+    chengjiao = [NSString stringWithFormat:@"%.2f",[chengjiao intValue]/100.0/10000];
+    chengjiaoe = [NSString stringWithFormat:@"%.2f亿",[chengjiaoe intValue]/10000/10000.0];
+    
 }
 
 - (void)beginRequestLoop {
@@ -374,6 +394,8 @@ typedef enum {
             return [NSString stringWithFormat:@"hf_%@", [[code substringFromIndex:3] uppercaseString]];
         }else if([[code lowercaseString] hasPrefix:@"gb_"]) {
             return [code lowercaseString];
+        }else if([[code lowercaseString] hasPrefix:@"hk"]) {
+            return [NSString stringWithFormat:@"rt_%@", code];
         }else
             return [code uppercaseString];
     }
@@ -395,6 +417,8 @@ typedef enum {
             return TYPE_Foreign;
         }else if([code hasPrefix:@"gb_"]) {
             return TYPE_MEIGU;
+        }else if([code hasPrefix:@"hk"]) {
+            return TYPE_GANGGU;
         }else {
             return TYPE_Futrue;
         }
